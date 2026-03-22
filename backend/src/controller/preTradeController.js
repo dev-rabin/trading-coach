@@ -34,6 +34,8 @@ export const preTradeCheck = async (req, res) => {
       reason: result.reason,
     });
 
+    console.log("Final Decision:", result);
+
     res.json({
       success: true,
       decision: result.decision,

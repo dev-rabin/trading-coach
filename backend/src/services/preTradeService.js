@@ -1,5 +1,57 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const cache = new Map();
+
+function setCache(key, value, ttl = 3600000) {
+  cache.set(key, {
+    value,
+    expiry: Date.now() + ttl,
+  });
+}
+
+function getCache(key) {
+  const data = cache.get(key);
+
+  if (!data) return null;
+
+  if (Date.now() > data.expiry) {
+    cache.delete(key);
+    return null;
+  }
+
+  return data.value;
+}
+
+function getCacheKey({ strategy, emotion, stopLoss }) {
+  const sl = stopLoss && stopLoss > 0 ? "withSL" : "noSL";
+  return `${strategy}_${emotion}_${sl}`;
+}
+
+function checkRules({ emotion, stopLoss, userName }) {
+  if (!stopLoss || stopLoss <= 0) {
+    return {
+      decision: "AVOID",
+      reason: `${userName}, no stop loss. Skip.`,
+    };
+  }
+
+  if (emotion?.toLowerCase() === "revenge") {
+    return {
+      decision: "AVOID",
+      reason: `${userName}, revenge trade. Stay out.`,
+    };
+  }
+
+  if (emotion?.toLowerCase() === "fear") {
+    return {
+      decision: "AVOID",
+      reason: `${userName}, fear detected. Skip.`,
+    };
+  }
+
+  return null;
+}
+
 export const generatePreTradeInsight = async ({
   userName,
   strategy,
@@ -8,38 +60,24 @@ export const generatePreTradeInsight = async ({
   behaviorSummary,
 }) => {
   try {
-    let warnings = [];
-    let softWarnings = [];
-
-    if (!stopLoss || stopLoss <= 0) {
-      warnings.push("No stop loss defined");
+    const ruleDecision = checkRules({ emotion, stopLoss, userName });
+    if (ruleDecision) {
+      return ruleDecision;
     }
-
-    if (emotion?.toLowerCase() === "fear") {
-      warnings.push("Trading in fear");
+    const cacheKey = getCacheKey({ strategy, emotion, stopLoss });
+    const cached = getCache(cacheKey);
+    if (cached) {
+      console.log("CACHE HIT ✅");
+      return cached;
     }
-
-    if (emotion?.toLowerCase() === "revenge") {
-      warnings.push("Revenge trading detected");
-    }
-
-    if (["hesitant", "confused", "excited"].includes(emotion?.toLowerCase())) {
-      softWarnings.push("Unstable mindset");
-    }
-
-    const isCleanSetup = warnings.length === 0 && softWarnings.length === 0;
-    const isSoftRisk = warnings.length === 0 && softWarnings.length > 0;
-
-    let baseDecision =
-      warnings.length > 0 ? "AVOID" : isSoftRisk ? "AVOID" : "PROCEED";
-
+    console.log("AI CALL 💸");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
 
-    const prompt = `
+ const prompt = `
 You are a strict trading coach who protects the user from bad trades.
 
 User: ${userName}
@@ -123,21 +161,20 @@ OUTPUT (STRICT JSON ONLY):
       aiResponse = null;
     }
 
+    // 🛡️ FALLBACK
     if (!aiResponse || !aiResponse.decision || !aiResponse.reason) {
-      return {
-        decision: baseDecision,
-        reason:
-          warnings.length > 0
-            ? `${userName}, avoid this. Poor discipline.`
-            : isSoftRisk
-              ? `${userName}, this feels off. Stay out.`
-              : `${userName}, this looks clean. Follow plan.`,
+      const fallback = {
+        decision: "PROCEED",
+        reason: `${userName}, looks fine. Execute properly.`,
       };
+
+      setCache(cacheKey, fallback);
+      return fallback;
     }
 
-    if (isCleanSetup && aiResponse.decision === "AVOID") {
-      aiResponse.decision = "PROCEED";
-    }
+    // 💾 4. SAVE TO CACHE
+    setCache(cacheKey, aiResponse);
+
     return aiResponse;
   } catch (error) {
     console.error("Pre-trade error:", error.message);
