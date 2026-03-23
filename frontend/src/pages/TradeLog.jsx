@@ -73,12 +73,12 @@ export default function TradeLogScreen() {
               </p>
               <textarea
                 placeholder="Add your thaughts."
-                className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-emerald-500"
+                className="w-full bg-black border border-white/10 rounded-xl p-3 text-sm outline-none focus:border-green-500"
               />
             </div>
 
             {/* Button */}
-            <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold px-6 py-2 rounded-xl">
+            <button className="w-full bg-green-500 hover:bg-green-600 text-black font-semibold px-6 py-2 rounded-xl">
               Save Trade
             </button>
           </div>
@@ -124,7 +124,7 @@ function Input({ label, placeholder }) {
       <p className="text-sm text-gray-400 mb-1">{label}</p>
       <input
         placeholder={placeholder}
-        className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:border-emerald-500"
+        className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:border-green-500"
       />
     </div>
   );
@@ -136,7 +136,7 @@ function Chip({ label, active, onClick }) {
       onClick={onClick}
       className={`px-3 py-1 rounded-full text-sm transition ${
         active
-          ? "bg-emerald-500 text-black"
+          ? "bg-green-500 text-black"
           : "bg-white/5 text-gray-300 hover:bg-white/10"
       }`}
     >
@@ -149,7 +149,7 @@ function StatRow({ label, value, positive }) {
   return (
     <div className="flex justify-between text-sm mb-2">
       <span className="text-gray-400">{label}</span>
-      <span className={positive ? "text-emerald-600" : "text-white/50"}>
+      <span className={positive ? "text-green-600" : "text-white/50"}>
         {value}
       </span>
     </div>
@@ -163,7 +163,7 @@ function Progress({ label, value, total, positive }) {
     <div className="mb-3">
       <div className="flex justify-between text-sm mb-1">
         <span className="text-gray-400">{label}</span>
-        <span className={positive ? "text-emerald-400" : "text-red-400"}>
+        <span className={positive ? "text-green-400" : "text-red-400"}>
           {value}
         </span>
       </div>
@@ -171,7 +171,7 @@ function Progress({ label, value, total, positive }) {
       <div className="h-2 bg-gray-800 rounded-full">
         <div
           className={`h-full rounded-full ${
-            positive ? "bg-emerald-500" : "bg-red-500"
+            positive ? "bg-green-500" : "bg-red-500"
           }`}
           style={{ width: `${percent}%` }}
         />
@@ -196,7 +196,7 @@ const ReflectionCard = () => {
       {/* Secondary Insight */}
       <div className="flex justify-between items-center text-sm">
         <span className="text-gray-400">Last 5 Trades</span>
-        <span className="text-emerald-400 font-medium">
+        <span className="text-green-400 font-medium">
           3 Profit <span className="text-white">•</span>{" "}
           <span className="text-orange-400">2 Loss</span>
         </span>

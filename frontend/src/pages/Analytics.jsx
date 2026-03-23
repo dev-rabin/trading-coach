@@ -121,10 +121,10 @@ function Card({ title, value, highlight }) {
 
 function InsightCard({ item }) {
   const colorMap = {
-    warning: "border-yellow-500 bg-yellow-500/10",
-    success: "border-green-500 bg-green-500/10",
-    danger: "border-red-500 bg-red-500/10",
-    info: "border-blue-500 bg-blue-500/10",
+    warning: "border-yellow-400 bg-yellow-400/10",
+    success: "border-green-400 bg-green-400/10",
+    danger: "border-red-400 bg-red-600/10",
+    info: "border-blue-400 bg-blue-400/10",
   };
 
   return (

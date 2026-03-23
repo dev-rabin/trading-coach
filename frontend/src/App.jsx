@@ -1,4 +1,3 @@
-import React from "react";
 import PreTradeScreen from "./pages/PreTrade";
 import AnalyticsScreen from "./pages/Analytics";
 import DisciplineScreen from "./pages/Displine";
@@ -9,6 +8,8 @@ import AICoachScreen from "./pages/AiCoach";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomeScreen from "./pages/Home";
 import TradeLogScreen from "./pages/TradeLog";
+import Signup from "./pages/SignUp";
+import Login from "./pages/Login";
 
 const App = () => {
   return (
@@ -16,6 +17,8 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/pre-trade-plan" element={<PreTradeScreen />} />
         <Route path="/analytics" element={<AnalyticsScreen />} />
         <Route path="/discipline" element={<DisciplineScreen />} />

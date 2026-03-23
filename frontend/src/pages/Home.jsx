@@ -3,7 +3,7 @@ import React from "react";
 
 const HomeScreen = () => {
   return (
-    <div className="min-h-screen text-white px-4 py-3 max-w-7xl mx-auto">
+    <div className="min-h-screen text-white py-3 max-w-7xl mx-auto">
       <div className="mb-4 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2 text-sm text-red-400 text-center">
         ⚠️ One bad trade can erase your day
       </div>
@@ -50,7 +50,7 @@ const HomeScreen = () => {
 
           {/* 🔥 MAIN CTA */}
           <div>
-            <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold p-4 rounded-xl text-lg shadow-lg shadow-emerald-500/20">
+            <button className="w-full bg-green-500 hover:bg-green-600 text-black font-bold p-4 rounded-xl text-lg shadow-lg shadow-green-500/20">
               Check Trade Before Entering
             </button>
             <p className="text-center text-xs text-gray-400 mt-2">
@@ -61,7 +61,7 @@ const HomeScreen = () => {
           {/* STATS (LOW PRIORITY) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-80">
             <Stat title="Win Rate" value="64%" />
-            <Stat title="Total P&L" value="+$2,840" emerald />
+            <Stat title="Total P&L" value="+$2,840" green />
             <Stat title="Risk/Reward" value="1.8R" />
             <Stat title="Trades" value="124" />
           </div>
@@ -74,10 +74,10 @@ const HomeScreen = () => {
             <p className="text-xs text-gray-400 mb-1">YOUR DISCIPLINE</p>
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">72/100</h2>
-              <span className="text-emerald-400 text-sm">+2 today</span>
+              <span className="text-green-400 text-sm">+2 today</span>
             </div>
             <div className="w-full bg-gray-800 h-2 rounded-full mt-3">
-              <div className="bg-emerald-500 h-2 rounded-full w-[72%]" />
+              <div className="bg-green-500 h-2 rounded-full w-[72%]" />
             </div>
             <p className="text-xs text-gray-400 mt-2">
               You are improving — stay consistent
@@ -111,17 +111,17 @@ const HomeScreen = () => {
       </div>
 
       {/* FINAL INSIGHT */}
-      <div className="p-2 mt-4 w-full text-center rounded-2xl bg-gradient-to-r from-emerald-500/20 to-black border border-emerald-500/30 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+      <div className="p-2 mt-4 w-full text-center rounded-2xl bg-gradient-to-r from-green-500/20 to-black border border-green-500/30 text-green-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
         You perform better when calm.
       </div>
     </div>
   );
 };
 
-const Stat = ({ title, value, emerald }) => (
+const Stat = ({ title, value, green }) => (
   <div className="bg-[#111] p-7 rounded-xl border border-gray-800">
     <p className="text-xs text-gray-400">{title}</p>
-    <p className={`text-xl font-semibold ${emerald ? "text-emerald-400" : ""}`}>
+    <p className={`text-xl font-semibold ${green ? "text-green-400" : ""}`}>
       {value}
     </p>
   </div>

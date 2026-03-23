@@ -1,4 +1,13 @@
-import { BarChart3, Brain, ShieldCheck, Flame, Menu, X, Book, Notebook } from "lucide-react";
+import {
+  BarChart3,
+  Brain,
+  ShieldCheck,
+  Flame,
+  Menu,
+  X,
+  Book,
+  Notebook,
+} from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
@@ -20,8 +29,9 @@ export default function Navbar() {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-white md:text-base">
-              Trading Coach
+            <h1 className="text-xl font-semibold tracking-tight">
+              <span className="text-white">Trade</span>
+              <span className="text-green-400">Mind</span>
             </h1>
             <p className="text-[11px] text-gray-400 md:text-xs">
               AI discipline assistant
@@ -51,11 +61,11 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-3 md:flex">
-          <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs font-medium text-emerald-400 animate-pulse">
+          <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-400 animate-pulse">
             Live Coach
           </div>
 
-          <button className="rounded-xl bg-emerald-500 px-4 py-2 text-xs font-bold text-black transition hover:bg-emerald-400">
+          <button className="rounded-xl bg-green-500 px-4 py-2 text-xs font-bold text-black transition hover:bg-green-400">
             Check Trade
           </button>
         </div>
