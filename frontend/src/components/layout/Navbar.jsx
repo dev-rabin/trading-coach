@@ -2,19 +2,19 @@ import {
   BarChart3,
   Brain,
   ShieldCheck,
-  Flame,
   Menu,
   X,
-  Book,
   Notebook,
+  Home,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
+  { name: "Home", icon: Home, href: "/" },
   { name: "Pre-Trade", icon: Brain, href: "/pre-trade-plan" },
   { name: "Trade Log", icon: Notebook, href: "/trade-log" },
   { name: "Analytics", icon: BarChart3, href: "/analytics" },
-  { name: "Discipline", icon: Flame, href: "/discipline" },
+  // { name: "Discipline", icon: Flame, href: "/discipline" },
 ];
 
 export default function Navbar() {

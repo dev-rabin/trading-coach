@@ -1,5 +1,9 @@
 import { useState } from "react";
 import TradeHistoryScreen from "./TradeHistory";
+import Input from "../components/TradeLog/Input";
+import Chip from "../components/TradeLog/Chip";
+import StatRow from "../components/TradeLog/StatRow";
+import ReflectionCard from "../components/TradeLog/ReflectionCard";
 
 const strategies = [
   "Breakout",
@@ -115,92 +119,3 @@ export default function TradeLogScreen() {
     </div>
   );
 }
-
-/* ---------- COMPONENTS ---------- */
-
-function Input({ label, placeholder }) {
-  return (
-    <div>
-      <p className="text-sm text-gray-400 mb-1">{label}</p>
-      <input
-        placeholder={placeholder}
-        className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:border-green-500"
-      />
-    </div>
-  );
-}
-
-function Chip({ label, active, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-3 py-1 rounded-full text-sm transition ${
-        active
-          ? "bg-green-500 text-black"
-          : "bg-white/5 text-gray-300 hover:bg-white/10"
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function StatRow({ label, value, positive }) {
-  return (
-    <div className="flex justify-between text-sm mb-2">
-      <span className="text-gray-400">{label}</span>
-      <span className={positive ? "text-green-600" : "text-white/50"}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function Progress({ label, value, total, positive }) {
-  const percent = (value / total) * 100;
-
-  return (
-    <div className="mb-3">
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-400">{label}</span>
-        <span className={positive ? "text-green-400" : "text-red-400"}>
-          {value}
-        </span>
-      </div>
-
-      <div className="h-2 bg-gray-800 rounded-full">
-        <div
-          className={`h-full rounded-full ${
-            positive ? "bg-green-500" : "bg-red-500"
-          }`}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-const ReflectionCard = () => {
-  return (
-    <div className="bg-[#111] border border-gray-800 rounded-2xl p-4.5">
-      {/* Title */}
-      <p className="text-xs text-gray-400 mb-2">YOUR PATTERNS</p>
-      {/* Main Insight */}
-      <h3 className="text-sm font-medium text-blue-400 leading-relaxed">
-        You perform better when trading in a calm state
-      </h3>
-
-      {/* Divider */}
-      <div className="border-t border-gray-800 my-4"></div>
-
-      {/* Secondary Insight */}
-      <div className="flex justify-between items-center text-sm">
-        <span className="text-gray-400">Last 5 Trades</span>
-        <span className="text-green-400 font-medium">
-          3 Profit <span className="text-white">•</span>{" "}
-          <span className="text-orange-400">2 Loss</span>
-        </span>
-      </div>
-    </div>
-  );
-};

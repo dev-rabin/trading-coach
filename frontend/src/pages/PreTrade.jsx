@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { AlertTriangle, Shield } from "lucide-react";
+import Chip from "../components/PreTrade/Chip";
+import EmotionChip from "../components/PreTrade/EmotionChip";
+import Input from "../components/PreTrade/Input";
+import DecisionScreen from "../components/PreTrade/Decision";
 
 const strategies = ["Breakout", "Scalping", "Swing", "Momentum", "Reversal"];
 const emotions = ["Calm", "Confident", "Fear", "Revenge", "FOMO"];
@@ -142,77 +146,6 @@ export default function PreTradeScreen() {
   );
 }
 
-/* ---------- COMPONENTS ---------- */
 
-function Chip({ label, active, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-1 rounded-lg text-sm ${
-        active
-          ? "bg-white text-black"
-          : "bg-white/5 text-gray-300 hover:bg-white/10"
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
 
-function EmotionChip({ label, active, onClick }) {
-  const styles = {
-    Calm: "bg-green-500/20 text-green-400",
-    Confident: "bg-green-500/20 text-green-400",
-    Fear: "bg-red-500/20 text-red-400",
-    Revenge: "bg-red-500/20 text-red-400",
-    FOMO: "bg-red-500 text-white",
-  };
 
-  return (
-    <button
-      onClick={onClick}
-      className={`px-3 py-1 rounded-lg text-sm ${
-        active ? styles[label] : "bg-white/5 text-gray-300 hover:bg-white/10"
-      }`}
-    >
-      {label}
-    </button>
-  );
-}
-
-function Input({ label, placeholder, suffix }) {
-  return (
-    <div>
-      <p className="text-sm text-gray-400 mb-1">{label}</p>
-      <div className="relative">
-        <input
-          placeholder={placeholder}
-          className="w-full bg-black border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:border-green-500"
-        />
-        {suffix && (
-          <span className="absolute right-3 top-2 text-gray-400 text-sm">
-            {suffix}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function DecisionScreen() {
-  return (
-    <div className="w-full rounded-3xl p-3 text-center border border-red-500/30 bg-gradient-to-b from-red-500/10 to-black">
-      <p className="text-sm tracking-widest text-red-400 mb-4">
-        COACH DECISION
-      </p>
-      <h1 className="text-5xl font-bold text-red-400">AVOID</h1>
-      <p className="text-gray-300 mt-4 text-lg">
-        Robin, this is forced. Skip this trade.
-      </p>
-      <div className="h-px bg-white/10 my-2" />
-      <p className="text-gray-400 text-sm">
-        You're repeating a mistake. Wait for a better setup.
-      </p>
-    </div>
-  );
-}

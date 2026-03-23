@@ -21,7 +21,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/pre-trade-plan" element={<PreTradeScreen />} />
         <Route path="/analytics" element={<AnalyticsScreen />} />
-        <Route path="/discipline" element={<DisciplineScreen />} />
+        {/* <Route path="/discipline" element={<DisciplineScreen />} /> */}
         <Route path="/trade-log" element={<TradeLogScreen />} />
         <Route path="/trade-history" element={<TradeHistoryScreen />} />
       </Routes>

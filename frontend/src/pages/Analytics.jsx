@@ -1,148 +1,137 @@
-import { useEffect, useState } from "react";
+import {
+  Brain,
+  Activity,
+} from "lucide-react";
+import InsightCard from "../components/Analytics/InsightCard";
+import StatCard from "../components/Analytics/StatCard";
+import ProfitChart from "../components/Charts/ProfitChart";
+import StrategyChart from "../components/Charts/StrategyChart";
 
 export default function AnalyticsScreen() {
-  const [analytics, setAnalytics] = useState(null);
-
-  useEffect(() => {
-    setAnalytics({
-      winRate: 67.4,
-      totalProfit: 12847,
-      riskReward: "1:2.4",
-      totalTrades: 326,
-      insights: [
-        {
-          type: "warning",
-          title: "Fear-driven trades are hurting you",
-          desc: "You've lost 68% of trades exited early.",
-          action: "Use predefined stop-loss before entry",
-          priority: "High",
-        },
-        {
-          type: "success",
-          title: "Breakout strategy is your strength",
-          desc: "78% win rate with strong gains.",
-          action: "Focus more on breakout setups",
-          priority: "High",
-        },
-        {
-          type: "warning",
-          title: "Position sizing inconsistency",
-          desc: "Position size increases after losses.",
-          action: "Stick to fixed risk rules",
-          priority: "High",
-        },
-        {
-          type: "danger",
-          title: "Overtrading on Mondays",
-          desc: "3x more trades than average.",
-          action: "Limit trades on Mondays",
-          priority: "Medium",
-        },
-        {
-          type: "info",
-          title: "Optimal trading window identified",
-          desc: "Best performance between 10:30–12 PM.",
-          action: "Focus trades in this window",
-          priority: "Medium",
-        },
-      ],
-    });
-  }, []);
-
-  if (!analytics) return <div className="text-white p-10">Loading...</div>;
-
   return (
-    <div className="min-h-screen text-white p-5 space-y-8 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="py-6 text-white max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-10">
+        <div className="flex items-center gap-3 ">
+          <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
+            <Brain />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold">
+              You're improving, but still making emotional mistakes
+            </h1>
+            <p className="text-gray-400 text-sm">
+              Based on your recent trading activity
+            </p>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex bg-[#111] rounded-lg p-1 text-sm">
+          {["7D", "30D", "90D", "All Time"].map((t, i) => (
+            <button
+              key={i}
+              className={`px-3 py-1 rounded-md ${
+                t === "30D"
+                  ? "bg-white text-black"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <StatCard title="Win Rate" value="62.4%" change="+4.2%" positive />
+        <StatCard
+          title="Total Profit"
+          value="$8,420"
+          change="+12.5%"
+          positive
+        />
+        <StatCard title="Risk/Reward" value="1:2.4" change="+8.1%" positive />
+        <StatCard title="Total Trades" value="111" change="-5.2%" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+        <div className="bg-[#060606] border border-gray-800 rounded-2xl p-5">
+          <h2 className="mb-4">Profit Over Time</h2>
+          <ProfitChart/>
+        </div>
+
+        <div className="bg-[#060606] border border-gray-800 rounded-2xl p-5">
+          <h2 className="mb-4">Strategy Performance</h2>
+          <StrategyChart/>
+        </div>
+      </div>
+
+      {/* Insights */}
+      <div className="space-y-6 mt-14">
+        <div className="flex items-start gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
+            <Activity />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold">
+              Your Trading Psychology Report
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Understand what’s hurting your performance and what’s working
+            </p>
+          </div>
+        </div>
+
         <div>
-          <h1 className="text-2xl font-bold">Trading Analytics</h1>
-          <p className="text-gray-400 text-sm">Personal Assistant</p>
+          <p className="text-red-400 mb-2">● Critical Issues</p>
+          <InsightCard
+            type="danger"
+            title="Fear-driven trades are hurting you"
+            desc="68% of your losing trades were exited early due to emotional reactions."
+            suggestion="Use predefined stop-loss before entry"
+            tag="High"
+          />
         </div>
-        <div className="text-sm text-green-400">● Live</div>
-      </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card title="Win Rate" value={`${analytics.winRate}%`} highlight />
-        <Card title="Total Profit" value={`$${analytics.totalProfit}`} />
-        <Card title="Risk/Reward" value={analytics.riskReward} />
-        <Card title="Total Trades" value={analytics.totalTrades} />
-      </div>
-
-      {/* Charts Section (Placeholder) */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-[#111] p-5 rounded-2xl h-64">
-          <h2 className="text-sm text-gray-400 mb-3">Profit Over Time</h2>
-          <div className="h-full flex items-center justify-center text-gray-500">
-            Chart here
+        <div>
+          <p className="text-yellow-400 mb-2">● Warnings</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <InsightCard
+              type="warning"
+              title="Position sizing inconsistency"
+              desc="You increase position size after losses, increasing risk."
+              suggestion="Stick to fixed risk rules (1–2%)"
+              tag="Medium"
+            />
+            <InsightCard
+              type="warning"
+              title="Overtrading on Mondays"
+              desc="Monday trades have lower win rate than other days."
+              suggestion="Reduce trade frequency on Mondays"
+              tag="Medium"
+            />
           </div>
         </div>
 
-        <div className="bg-[#111] p-5 rounded-2xl h-64">
-          <h2 className="text-sm text-gray-400 mb-3">Strategy Performance</h2>
-          <div className="h-full flex items-center justify-center text-gray-500">
-            Chart here
+        <div>
+          <p className="text-green-400 mb-2">● Strengths</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <InsightCard
+              type="success"
+              title="Breakout strategy is your strength"
+              desc="You perform consistently well with breakout setups."
+              tag="Low"
+            />
+            <InsightCard
+              type="success"
+              title="Strong discipline in trends"
+              desc="You follow rules better in trending markets."
+              tag="Low"
+            />
           </div>
         </div>
       </div>
-
-      {/* AI Insights */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">AI Insights</h2>
-
-        {analytics.insights.map((item, index) => (
-          <InsightCard key={index} item={item} />
-        ))}
-
-        <div className="text-gray-500 text-sm mt-4">
-          {analytics.insights.length} insights based on {analytics.totalTrades}{" "}
-          trades
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- Components ---------------- */
-
-function Card({ title, value, highlight }) {
-  return (
-    <div
-      className={`p-5 rounded-2xl bg-[#111] ${
-        highlight ? "border border-green-500" : ""
-      }`}
-    >
-      <p className="text-gray-400 text-sm">{title}</p>
-      <h2 className="text-2xl font-bold mt-2">{value}</h2>
-    </div>
-  );
-}
-
-function InsightCard({ item }) {
-  const colorMap = {
-    warning: "border-yellow-400 bg-yellow-400/10",
-    success: "border-green-400 bg-green-400/10",
-    danger: "border-red-400 bg-red-600/10",
-    info: "border-blue-400 bg-blue-400/10",
-  };
-
-  return (
-    <div
-      className={`p-5 rounded-2xl border ${
-        colorMap[item.type]
-      } flex justify-between`}
-    >
-      <div>
-        <h3 className="font-semibold">{item.title}</h3>
-        <p className="text-gray-400 text-sm mt-1">{item.desc}</p>
-
-        <p className="text-green-400 text-sm mt-2">→ {item.action}</p>
-      </div>
-
-      <span className="text-xs bg-black px-3 py-1 rounded-full h-fit">
-        {item.priority}
-      </span>
     </div>
   );
 }

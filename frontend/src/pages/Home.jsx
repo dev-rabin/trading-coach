@@ -1,5 +1,5 @@
 import { Brain } from "lucide-react";
-import React from "react";
+import Stat from "../components/Home/Stat";
 
 const HomeScreen = () => {
   return (
@@ -8,7 +8,6 @@ const HomeScreen = () => {
         ⚠️ One bad trade can erase your day
       </div>
 
-      {/* 👋 HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <p className="text-sm text-gray-400">Good morning,</p>
@@ -17,7 +16,6 @@ const HomeScreen = () => {
         <p className="text-gray-500 text-sm">March 22, 2026</p>
       </div>
 
-      {/* 🧩 MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 🟢 LEFT (MAIN ACTION) */}
         <div className="lg:col-span-2 space-y-5">
@@ -58,7 +56,6 @@ const HomeScreen = () => {
             </p>
           </div>
 
-          {/* STATS (LOW PRIORITY) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-80">
             <Stat title="Win Rate" value="64%" />
             <Stat title="Total P&L" value="+$2,840" green />
@@ -118,13 +115,5 @@ const HomeScreen = () => {
   );
 };
 
-const Stat = ({ title, value, green }) => (
-  <div className="bg-[#111] p-7 rounded-xl border border-gray-800">
-    <p className="text-xs text-gray-400">{title}</p>
-    <p className={`text-xl font-semibold ${green ? "text-green-400" : ""}`}>
-      {value}
-    </p>
-  </div>
-);
 
 export default HomeScreen;
