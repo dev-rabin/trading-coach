@@ -6,6 +6,7 @@ export default function Input({
   type = "text",
   placeholder,
   value,
+  name,
   onChange,
   error,
   icon,
@@ -28,6 +29,7 @@ export default function Input({
         <input
           type={isPassword && showPassword ? "text" : type}
           placeholder={placeholder}
+          name={name}
           value={value}
           onChange={onChange}
           className="w-full text-sm p-2 bg-transparent outline-none text-white placeholder-gray-500"

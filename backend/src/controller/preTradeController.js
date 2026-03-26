@@ -4,7 +4,7 @@ import { generatePreTradeInsight } from "../services/preTradeService.js";
 
 export const preTradeCheck = async (req, res) => {
   try {
-    const { strategy, emotion, stopLoss } = req.body;
+    const { strategy, emotion, stopLoss, riskReward } = req.body;
 
     if (!strategy || !emotion) {
       return res.status(400).json({
@@ -14,7 +14,6 @@ export const preTradeCheck = async (req, res) => {
 
     const userId = req.user._id;
     const userName = req.user.name || "Trader";
-
     const behaviorSummary = await getBehaviorSummary(userId);
 
     const result = await generatePreTradeInsight({
@@ -22,6 +21,7 @@ export const preTradeCheck = async (req, res) => {
       strategy,
       emotion,
       stopLoss,
+      riskReward,
       behaviorSummary,
     });
 
@@ -30,12 +30,10 @@ export const preTradeCheck = async (req, res) => {
       strategy,
       emotion,
       stopLoss,
+      riskReward,
       decision: result.decision,
       reason: result.reason,
     });
-
-    console.log("Final Decision:", result);
-
     res.json({
       success: true,
       decision: result.decision,

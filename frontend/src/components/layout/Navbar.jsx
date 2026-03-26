@@ -8,16 +8,28 @@ import {
   Home,
 } from "lucide-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../features/auth/authSlice";
 
 const navItems = [
   { name: "Home", icon: Home, href: "/" },
   { name: "Pre-Trade", icon: Brain, href: "/pre-trade-plan" },
   { name: "Trade Log", icon: Notebook, href: "/trade-log" },
   { name: "Analytics", icon: BarChart3, href: "/analytics" },
-  // { name: "Discipline", icon: Flame, href: "/discipline" },
 ];
 
 export default function Navbar() {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    navigate("/login");
+  };
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -65,9 +77,42 @@ export default function Navbar() {
             Live Coach
           </div>
 
-          <button className="rounded-xl bg-green-500 px-4 py-2 text-xs font-bold text-black transition hover:bg-green-400">
-            Check Trade
-          </button>
+          <div className="relative" onClick={() => setOpen(!open)}>
+            <div className="flex items-center gap-3 cursor-pointer bg-[#0f0f0f] px-3 py-2 rounded-xl border border-gray-800 hover:border-green-400 transition">
+              <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-semibold">
+                {user?.name?.[0]?.toUpperCase() || "U"}
+              </div>
+
+              <p className="text-sm text-green-400">{user?.name || "Trader"}</p>
+            </div>
+
+            {open && (
+              <div className="absolute right-0 mt-3 w-44 bg-[#0f0f0f] text-white border border-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <button
+                  onClick={() => navigate("/analytics")}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-green-600 transition cursor-pointer"
+                >
+                  Analytics
+                </button>
+
+                <button
+                  onClick={() => navigate("/trade-history")}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-green-600 transition cursor-pointer"
+                >
+                  Trade History
+                </button>
+
+                <div className="border-t border-gray-800" />
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 transition cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Toggle */}

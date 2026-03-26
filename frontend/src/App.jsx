@@ -1,32 +1,80 @@
 import PreTradeScreen from "./pages/PreTrade";
 import AnalyticsScreen from "./pages/Analytics";
-import DisciplineScreen from "./pages/Displine";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import TradeHistoryScreen from "./pages/TradeHistory";
-import AICoachScreen from "./pages/AiCoach";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import HomeScreen from "./pages/Home";
 import TradeLogScreen from "./pages/TradeLog";
 import Signup from "./pages/SignUp";
 import Login from "./pages/Login";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getMe } from "./features/auth/authSlice";
+import ProtectedRoute from "./guards/protectedRoute";
+import PublicRoute from "./guards/publicRoute";
+
+const Layout = () => {
+  const dispatch = useDispatch();
+  const { authStatus } = useSelector((state) => state.auth);
+  const location = useLocation();
+  const hideLayout =
+    location.pathname === "/login" || location.pathname === "/signup";
+
+  useEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
+
+  if (authStatus === "loading") {
+    return (
+      <div className="h-screen flex items-center justify-center text-gray-400">
+        Checking session...
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {!hideLayout && <Navbar />}
+      <Routes>
+        <Route path="/" element={<HomeScreen />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/pre-trade-plan"
+          element={
+            <ProtectedRoute>
+              <PreTradeScreen />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/analytics" element={<AnalyticsScreen />} />
+        <Route path="/trade-log" element={<TradeLogScreen />} />
+        <Route path="/trade-history" element={<TradeHistoryScreen />} />
+      </Routes>
+      {!hideLayout && <Footer />}
+    </>
+  );
+};
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/pre-trade-plan" element={<PreTradeScreen />} />
-        <Route path="/analytics" element={<AnalyticsScreen />} />
-        {/* <Route path="/discipline" element={<DisciplineScreen />} /> */}
-        <Route path="/trade-log" element={<TradeLogScreen />} />
-        <Route path="/trade-history" element={<TradeHistoryScreen />} />
-      </Routes>
-      {/* <AICoachScreen /> */}
-      <Footer />
+      <Layout />
     </BrowserRouter>
   );
 };

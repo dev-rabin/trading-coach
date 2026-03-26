@@ -16,7 +16,6 @@ const preTradeSchema = new Schema(
       type: String,
       required: true,
     },
-
     emotion: {
       type: String,
       required: true,
@@ -25,6 +24,9 @@ const preTradeSchema = new Schema(
     stopLoss: {
       type: Number,
       default: null,
+    },
+    riskReward: {
+      type: Number,
     },
 
     decision: {
@@ -38,7 +40,7 @@ const preTradeSchema = new Schema(
     isTradeTaken: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true },
 );

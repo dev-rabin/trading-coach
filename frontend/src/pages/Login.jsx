@@ -1,11 +1,56 @@
-import { ArrowRight, BarChart3, Brain } from "lucide-react";
+import { BarChart3, Brain } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import FeatureCard from "../components/Auth/FeatureCard";
 import Input from "../components/Auth/Input";
 import Button from "../components/Auth/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { login } from "../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { error, status } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const errors = {};
+    if (!formData.email) {
+      errors.email = "Email is required";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    try {
+      await dispatch(login(formData)).unwrap();
+      navigate("/pre-trade-plan");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto my-10 text-white flex">
       {/* LEFT SIDE */}
@@ -34,8 +79,8 @@ export default function Login() {
         </p>
         <p className="text-gray-400 mb-10 max-w-md">
           <b className="text-green-400">Pause</b> <span>& </span>
-          <b className="text-green-400">Think</b>. Follow your rules
-          before entering a trade.
+          <b className="text-green-400">Think</b>. Follow your rules before
+          entering a trade.
         </p>
 
         <div className="space-y-4">
@@ -70,8 +115,15 @@ export default function Login() {
             Log in to evaluate your next trade.
           </p>
 
-          <form className="space-y-4">
-            <Input label="Email" placeholder="trader@example.com" />
+          <form className="space-y-4" onSubmit={handleLogin}>
+            <Input
+              label="Email"
+              placeholder="trader@example.com"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              error={formErrors.email}
+            />
             <div>
               <div className="flex justify-between items-center">
                 <label className="text-sm text-gray-400">Password</label>
@@ -80,12 +132,29 @@ export default function Login() {
                 </span>
               </div>
 
-              <Input type="password" placeholder="Enter your password" />
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={formErrors.password}
+              />
             </div>
             <p className="text-xs text-center text-gray-400">
               Following your rules protects your capital
             </p>
-            <Button text="Continue Trading Smart" />
+            <Button
+              text={
+                status === "loading"
+                  ? "Continuing..."
+                  : "Continue Trading Smart"
+              }
+              disabled={status === "loading"}
+            />
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
           </form>
 
           <div className="flex items-center gap-4 my-6">
@@ -105,7 +174,10 @@ export default function Login() {
 
           <p className="text-sm text-gray-400 mt-6 text-center">
             Don’t have an account?{" "}
-            <span className="text-green-400 cursor-pointer hover:underline">
+            <span
+              className="text-green-400 cursor-pointer hover:underline"
+              onClick={() => navigate("/signup")}
+            >
               Sign up
             </span>
           </p>

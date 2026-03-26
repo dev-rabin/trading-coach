@@ -9,7 +9,12 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 
@@ -17,8 +22,8 @@ app.get("/", (req, res) => {
   res.send("Server is online.");
 });
 
-import PretradeRoutes from "./src/routes/preTradeRoutes.js"
-app.use("/api/pretrade", PretradeRoutes)
+import PretradeRoutes from "./src/routes/preTradeRoutes.js";
+app.use("/api/pretrade", PretradeRoutes);
 
 import TradeRoutes from "./src/routes/tradeRoutes.js";
 app.use("/api/trade", TradeRoutes);
