@@ -4,11 +4,63 @@ import Chip from "../components/PreTrade/Chip";
 import EmotionChip from "../components/PreTrade/EmotionChip";
 import Input from "../components/PreTrade/Input";
 import DecisionScreen from "../components/PreTrade/Decision";
+import { useDispatch, useSelector } from "react-redux";
+import { preTradePlan } from "../features/preTrade/preTradeSlice.js";
 
 const strategies = ["Breakout", "Scalping", "Swing", "Momentum", "Reversal"];
 const emotions = ["Calm", "Confident", "Fear", "Revenge", "FOMO"];
 
 export default function PreTradeScreen() {
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.preTrade);
+
+  const [formData, setFormData] = useState({
+    strategy: "Reversal",
+    emotion: "FOMO",
+    stopLoss: "",
+    riskReward: "",
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    strategy: "",
+    emotion: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setFormErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+
+  const handleStrategySelect = (item) => {
+    setSelectedStrategy(item);
+    setFormData((prev) => ({ ...prev, strategy: item }));
+  };
+
+  const handleEmotionSelect = (item) => {
+    setSelectedEmotion(item);
+    setFormData((prev) => ({ ...prev, emotion: item }));
+  };
+
+  const handleSubmit = async () => {
+    const errors = {};
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+    try {
+      await dispatch(preTradePlan(formData)).unwrap();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const [selectedStrategy, setSelectedStrategy] = useState("Reversal");
   const [selectedEmotion, setSelectedEmotion] = useState("FOMO");
 
@@ -29,9 +81,7 @@ export default function PreTradeScreen() {
       <div className=" grid lg:grid-cols-3 gap-6">
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-6">
-          {/* FORM CARD */}
-          <div className="bg-[#111] border border-white/5 rounded-2xl p-6 space-y-6">
-            {/* Strategy */}
+          <div className="bg-[#111] border border-white/5 rounded-2xl p-7.5 space-y-6">
             <div>
               <p className="text-sm text-gray-400 mb-2">Strategy</p>
               <div className="flex flex-wrap gap-2">
@@ -40,7 +90,7 @@ export default function PreTradeScreen() {
                     key={item}
                     label={item}
                     active={selectedStrategy === item}
-                    onClick={() => setSelectedStrategy(item)}
+                    onClick={() => handleStrategySelect(item)}
                   />
                 ))}
               </div>
@@ -55,7 +105,7 @@ export default function PreTradeScreen() {
                     key={item}
                     label={item}
                     active={selectedEmotion === item}
-                    onClick={() => setSelectedEmotion(item)}
+                    onClick={() => handleEmotionSelect(item)}
                   />
                 ))}
               </div>
@@ -63,20 +113,36 @@ export default function PreTradeScreen() {
 
             {/* Inputs */}
             <div className="grid md:grid-cols-2 gap-4">
-              <Input label="Stop Loss (%)" placeholder="2.0" suffix="%" />
               <Input
+                name="stopLoss"
+                label="Stop Loss (%)"
+                placeholder="2.0"
+                suffix="%"
+                value={formData.stopLoss}
+                onChange={handleChange}
+                error={formErrors.stopLoss}
+              />
+              <Input
+                name="riskReward"
                 label="Risk/Reward (Optional)"
                 placeholder="2.5"
                 suffix="R"
+                value={formData.riskReward}
+                onChange={handleChange}
               />
             </div>
           </div>
 
           {/* CTA */}
-          <button className="w-full bg-green-400 text-black font-medium py-4 rounded-xl flex items-center justify-center gap-2">
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-green-400 text-black font-medium py-4 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+          >
             <AlertTriangle size={18} />
-            Check This Trade
+            {status === "loading" ? "Analyzing..." : "Check This Trade"}
           </button>
+
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <DecisionScreen />
         </div>
@@ -145,7 +211,3 @@ export default function PreTradeScreen() {
     </div>
   );
 }
-
-
-
-

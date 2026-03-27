@@ -1,4 +1,4 @@
-export default function Input({ label, placeholder, suffix }) {
+export default function Input({ label, placeholder, suffix, error }) {
   return (
     <div>
       <p className="text-sm text-gray-400 mb-1">{label}</p>
@@ -13,6 +13,7 @@ export default function Input({ label, placeholder, suffix }) {
           </span>
         )}
       </div>
+      <p className="text-red-500 text-sm text-left">{error}</p>
     </div>
   );
 }
