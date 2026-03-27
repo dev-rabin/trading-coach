@@ -9,27 +9,34 @@ import {
   Cell,
 } from "recharts";
 
-const data = [
-  { strategy: "Breakout", profit: 2400 },
-  { strategy: "Scalping", profit: 1200 },
-  { strategy: "Trend", profit: 1800 },
-  { strategy: "Range", profit: -800 },
-  { strategy: "News", profit: 600 },
-  { strategy: "RSI", profit: 1000 },
-];
-
-export default function StrategyChart() {
+export default function StrategyChart({ data = [] }) {
+  const chartData = data.map((item) => ({
+    strategy: item.name,
+    profit: item.profit,
+  }));
+  
+  if (!data?.length) {
+    return (
+      <div className="h-64 flex items-center justify-center text-gray-500">
+        No strategy data
+      </div>
+    );
+  }
   return (
     <div>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
+          <BarChart data={chartData}>
+            <CartesianGrid stroke="#1f2937" vertical={false} />
+
             <XAxis
               dataKey="strategy"
               stroke="#6b7280"
               tick={{ fontSize: 12 }}
             />
+
             <YAxis stroke="#6b7280" tick={{ fontSize: 12 }} />
+
             <Tooltip
               cursor={{ fill: "transparent" }}
               contentStyle={{
@@ -39,13 +46,14 @@ export default function StrategyChart() {
                 color: "#fff",
               }}
             />
+
             <Bar
               dataKey="profit"
-              radius={[3, 3, 0, 0]}
+              radius={[4, 4, 0, 0]}
               barSize={30}
               activeBar={false}
             >
-              {data.map((entry, index) => (
+              {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={entry.profit >= 0 ? "#22c55e" : "#ef4444"}

@@ -14,6 +14,9 @@ import { getMe } from "./features/auth/authSlice";
 import ProtectedRoute from "./guards/protectedRoute";
 import PublicRoute from "./guards/publicRoute";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
+
 const Layout = () => {
   const dispatch = useDispatch();
   const { authStatus } = useSelector((state) => state.auth);
@@ -73,9 +76,11 @@ const Layout = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 

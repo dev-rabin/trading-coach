@@ -1,15 +1,68 @@
-import {
-  Brain,
-  Activity,
-} from "lucide-react";
+import { Brain, Activity } from "lucide-react";
 import InsightCard from "../components/Analytics/InsightCard";
 import StatCard from "../components/Analytics/StatCard";
 import ProfitChart from "../components/Charts/ProfitChart";
 import StrategyChart from "../components/Charts/StrategyChart";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { analyticsAPI } from "../features/analytics/analyticsAPI";
 
 export default function AnalyticsScreen() {
+  const [range, setRange] = useState("30D");
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ["analytics", range],
+    queryFn: () => analyticsAPI(range),
+    keepPreviousData: true,
+  });
+
+  {
+    isFetching && (
+      <p className="text-gray-400 text-sm mt-2">Updating data...</p>
+    );
+  }
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center text-gray-400">
+        Loading analytics...
+      </div>
+    );
+  }
+  if (isError)
+    return <div className="text-red-500 p-6">Error loading data</div>;
+
+  const critical = [];
+  const warnings = [];
+  const strengths = [];
+
+  data.insights.forEach((text) => {
+    const lower = text.toLowerCase();
+
+    if (
+      lower.includes("poor") ||
+      lower.includes("not working") ||
+      lower.includes("avoid")
+    ) {
+      critical.push({
+        type: "danger",
+        title: text,
+      });
+    } else if (lower.includes("low") || lower.includes("too")) {
+      warnings.push({
+        type: "warning",
+        title: text,
+      });
+    } else {
+      strengths.push({
+        type: "success",
+        title: text,
+      });
+    }
+  });
+
   return (
     <div className="py-6 text-white max-w-7xl mx-auto">
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-10">
         <div className="flex items-center gap-3 ">
           <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
@@ -17,21 +70,22 @@ export default function AnalyticsScreen() {
           </div>
           <div>
             <h1 className="text-xl font-semibold">
-              You're improving, but still making emotional mistakes
+              Your Trading Behavior Summary
             </h1>
             <p className="text-gray-400 text-sm">
-              Based on your recent trading activity
+              Last Emotion: {data.lastEmotion} | Strategy: {data.lastStrategy}
             </p>
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* TABS */}
         <div className="flex bg-[#111] rounded-lg p-1 text-sm">
-          {["7D", "30D", "90D", "All Time"].map((t, i) => (
+          {["7D", "30D", "90D", "All"].map((t, i) => (
             <button
               key={i}
+              onClick={() => setRange(t)}
               className={`px-3 py-1 rounded-md ${
-                t === "30D"
+                range === t
                   ? "bg-white text-black"
                   : "text-gray-400 hover:text-white"
               }`}
@@ -42,95 +96,105 @@ export default function AnalyticsScreen() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <StatCard title="Win Rate" value="62.4%" change="+4.2%" positive />
+      {/* STATS */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <StatCard title="Win Rate" value={`${data.winRate}%`} />
+        <StatCard title="Total Profit" value={`₹${data.totalProfit}`} />
+        <StatCard title="Risk/Reward" value={`1:${data.riskReward}`} />
+        <StatCard title="Total Trades" value={data.totalTrades} />
         <StatCard
-          title="Total Profit"
-          value="$8,420"
-          change="+12.5%"
-          positive
+          title="Consistency"
+          value={`${data.consistencyScore}%`}
+          change={
+            data.consistencyScore > 70
+              ? "Stable"
+              : data.consistencyScore > 40
+                ? "Moderate"
+                : "Unstable"
+          }
+          positive={data.consistencyScore > 60}
         />
-        <StatCard title="Risk/Reward" value="1:2.4" change="+8.1%" positive />
-        <StatCard title="Total Trades" value="111" change="-5.2%" />
       </div>
 
+      {/* CHARTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <div className="bg-[#060606] border border-gray-800 rounded-2xl p-5">
-          <h2 className="mb-4">Profit Over Time</h2>
-          <ProfitChart/>
+          <h2 className="mb-4">Profit by Strategy</h2>
+          <StrategyChart data={data.strategies} />
         </div>
 
         <div className="bg-[#060606] border border-gray-800 rounded-2xl p-5">
-          <h2 className="mb-4">Strategy Performance</h2>
-          <StrategyChart/>
+          <h2 className="mb-4">Performance Overview</h2>
+          <ProfitChart data={data.profitTimeline} />
         </div>
       </div>
 
-      {/* Insights */}
-      <div className="space-y-6 mt-14">
+      {/* AI INSIGHTS */}
+      <div className="space-y-4 mb-10">
+        <InsightCard
+          type="danger"
+          title="Key Mistakes"
+          desc={data.aiInsights.mistakes}
+        />
+        <InsightCard
+          type="success"
+          title="What Works"
+          desc={data.aiInsights.whatWorks}
+        />
+        <InsightCard
+          type="warning"
+          title="Improvements"
+          desc={data.aiInsights.improvements}
+        />
+      </div>
+
+      {/* INSIGHTS */}
+      <div className="space-y-6 mt-10">
         <div className="flex items-start gap-3 mb-6">
           <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
             <Activity />
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold">
-              Your Trading Psychology Report
-            </h2>
-            <p className="text-gray-400 text-sm">
-              Understand what’s hurting your performance and what’s working
-            </p>
+            <h2 className="text-xl font-semibold">Behavioral Insights</h2>
           </div>
         </div>
 
-        <div>
-          <p className="text-red-400 mb-2">● Critical Issues</p>
-          <InsightCard
-            type="danger"
-            title="Fear-driven trades are hurting you"
-            desc="68% of your losing trades were exited early due to emotional reactions."
-            suggestion="Use predefined stop-loss before entry"
-            tag="High"
-          />
-        </div>
-
-        <div>
-          <p className="text-yellow-400 mb-2">● Warnings</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            <InsightCard
-              type="warning"
-              title="Position sizing inconsistency"
-              desc="You increase position size after losses, increasing risk."
-              suggestion="Stick to fixed risk rules (1–2%)"
-              tag="Medium"
-            />
-            <InsightCard
-              type="warning"
-              title="Overtrading on Mondays"
-              desc="Monday trades have lower win rate than other days."
-              suggestion="Reduce trade frequency on Mondays"
-              tag="Medium"
-            />
+        {/* Critical */}
+        {critical.length > 0 && (
+          <div>
+            <p className="text-red-400 mb-2">● Critical Issues</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {critical.map((item, i) => (
+                <InsightCard key={i} {...item} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div>
-          <p className="text-green-400 mb-2">● Strengths</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            <InsightCard
-              type="success"
-              title="Breakout strategy is your strength"
-              desc="You perform consistently well with breakout setups."
-              tag="Low"
-            />
-            <InsightCard
-              type="success"
-              title="Strong discipline in trends"
-              desc="You follow rules better in trending markets."
-              tag="Low"
-            />
+        {/* Warnings */}
+        {warnings.length > 0 && (
+          <div>
+            <p className="text-yellow-400 mb-2">● Warnings</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {warnings.map((item, i) => (
+                <InsightCard key={i} {...item} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Strengths */}
+        {strengths.length > 0 && (
+          <div>
+            <p className="text-green-400 mb-2">● Strengths</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {strengths.map((item, i) => (
+                <InsightCard key={i} {...item} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

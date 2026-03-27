@@ -26,6 +26,7 @@ export const getAnalytics = async (userId) => {
   try {
     const cacheKey = `analytics_${userId}`;
     const cached = getCache(cacheKey);
+
     if (cached) {
       console.log("ANALYTICS CACHE HIT ✅");
       return cached;
@@ -33,7 +34,8 @@ export const getAnalytics = async (userId) => {
 
     console.log("ANALYTICS DB CALL 💸");
 
-    const trades = await Trade.find({ userId });
+    // ✅ Sort by date
+    const trades = await Trade.find({ userId }).sort({ createdAt: 1 });
 
     if (!trades.length) {
       const emptyData = {
@@ -43,10 +45,12 @@ export const getAnalytics = async (userId) => {
         avgWin: 0,
         avgLoss: 0,
         riskReward: "N/A",
+        consistencyScore,
         strategies: [],
         insights: [],
         lastEmotion: null,
         lastStrategy: null,
+        profitTimeline: [],
       };
 
       setCache(cacheKey, emptyData);
@@ -61,6 +65,8 @@ export const getAnalytics = async (userId) => {
     let lossAmount = 0;
 
     const strategyMap = {};
+    const emotionMap = {};
+    const dailyProfitMap = {};
 
     trades.forEach((trade) => {
       const pl =
@@ -69,6 +75,7 @@ export const getAnalytics = async (userId) => {
 
       totalProfit += pl;
 
+      // ---------- WIN / LOSS ----------
       if (pl > 0) {
         wins++;
         winAmount += pl;
@@ -77,6 +84,7 @@ export const getAnalytics = async (userId) => {
         lossAmount += Math.abs(pl);
       }
 
+      // ---------- STRATEGY ----------
       if (trade.strategy) {
         if (!strategyMap[trade.strategy]) {
           strategyMap[trade.strategy] = {
@@ -93,8 +101,36 @@ export const getAnalytics = async (userId) => {
           strategyMap[trade.strategy].wins += 1;
         }
       }
+
+      // ---------- EMOTION ----------
+      if (trade.emotion) {
+        if (!emotionMap[trade.emotion]) {
+          emotionMap[trade.emotion] = {
+            total: 0,
+            wins: 0,
+          };
+        }
+
+        emotionMap[trade.emotion].total += 1;
+        if (pl > 0) emotionMap[trade.emotion].wins += 1;
+      }
+
+      // ---------- TIMELINE (SAFE DATE HANDLING) ----------
+      const rawDate = trade.tradeDate || trade.createdAt;
+      const tradeDate = new Date(rawDate);
+
+      if (!isNaN(tradeDate)) {
+        const date = tradeDate.toISOString().split("T")[0];
+
+        if (!dailyProfitMap[date]) {
+          dailyProfitMap[date] = 0;
+        }
+
+        dailyProfitMap[date] += pl;
+      }
     });
 
+    // ---------- BASIC STATS ----------
     const totalTrades = trades.length;
     const winRate = ((wins / totalTrades) * 100).toFixed(2);
 
@@ -103,6 +139,7 @@ export const getAnalytics = async (userId) => {
 
     const riskReward = avgLoss > 0 ? (avgWin / avgLoss).toFixed(2) : "N/A";
 
+    // ---------- STRATEGIES ----------
     const strategies = Object.keys(strategyMap).map((key) => ({
       name: key,
       total: strategyMap[key].total,
@@ -110,6 +147,7 @@ export const getAnalytics = async (userId) => {
       winRate: (strategyMap[key].wins / strategyMap[key].total) * 100,
     }));
 
+    // ---------- INSIGHTS ----------
     const insights = [];
 
     if (avgLoss > avgWin) {
@@ -151,55 +189,35 @@ export const getAnalytics = async (userId) => {
       insights.push(`Avoid ${worstStrategy.name}`);
     }
 
-    const lastTrade = trades[trades.length - 1];
-
-    if (lastTrade?.emotion === "Revenge") {
-      insights.push("Revenge trading detected");
-    }
-
-    if (lastTrade?.emotion === "Fear") {
-      insights.push("Fear-based trading detected");
-    }
-
-    if (lastTrade?.emotion === "Overconfident") {
-      insights.push("Overconfidence may lead to losses");
-    }
-
-    const emotionMap = {};
-
-    trades.forEach((trade) => {
-      if (!trade.emotion) return;
-
-      if (!emotionMap[trade.emotion]) {
-        emotionMap[trade.emotion] = {
-          total: 0,
-          wins: 0,
-        };
-      }
-
-      const pl =
-        trade.profitLoss ??
-        (trade.exitPrice - trade.entryPrice) * trade.quantity;
-
-      emotionMap[trade.emotion].total += 1;
-
-      if (pl > 0) {
-        emotionMap[trade.emotion].wins += 1;
-      }
-    });
-
+    // ---------- EMOTION INSIGHTS ----------
     Object.keys(emotionMap).forEach((emotion) => {
       const data = emotionMap[emotion];
-      const winRate = (data.wins / data.total) * 100;
+      const eWinRate = (data.wins / data.total) * 100;
 
-      if (winRate < 30) {
+      if (eWinRate < 30) {
         insights.push(`${emotion} trades perform poorly`);
       }
 
-      if (winRate > 70) {
+      if (eWinRate > 70) {
         insights.push(`${emotion} trades perform well`);
       }
     });
+
+    const lastTrade = trades[trades.length - 1];
+
+    // ---------- PROFIT TIMELINE (CUMULATIVE) ----------
+    let cumulative = 0;
+
+    const profitTimeline = Object.keys(dailyProfitMap)
+      .sort()
+      .map((date) => {
+        cumulative += dailyProfitMap[date];
+
+        return {
+          date,
+          profit: cumulative,
+        };
+      });
 
     const result = {
       totalTrades,
@@ -212,9 +230,10 @@ export const getAnalytics = async (userId) => {
       insights,
       lastEmotion: lastTrade?.emotion || null,
       lastStrategy: lastTrade?.strategy || null,
+      profitTimeline, // ✅ FINAL FEATURE
     };
+
     setCache(cacheKey, result);
-    console.log("analytics result: ", result);
     return result;
   } catch (error) {
     console.error("Analytics error:", error.message);
