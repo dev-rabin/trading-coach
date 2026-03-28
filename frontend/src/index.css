@@ -4,3 +4,6 @@ body {
   background-color: black;
   font-family: "Geist", sans-serif;
 }
+.input {
+  @apply w-full bg-black border border-gray-800 rounded-xl p-3 text-sm outline-none focus:border-white;
+}

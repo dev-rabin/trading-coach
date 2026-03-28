@@ -26,7 +26,7 @@ import PretradeRoutes from "./src/routes/preTradeRoutes.js";
 app.use("/api/pretrade", PretradeRoutes);
 
 import TradeRoutes from "./src/routes/tradeRoutes.js";
-app.use("/api/trade", TradeRoutes);
+app.use("/api/trades", TradeRoutes);
 
 import AuthRoutes from "./src/routes/authRoutes.js";
 app.use("/api/auth", AuthRoutes);
