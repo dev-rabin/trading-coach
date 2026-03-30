@@ -1,4 +1,5 @@
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import Loader from "../components/layout/Loader";
 
 export default function TradeHistoryScreen({
   trades,
@@ -15,15 +16,12 @@ export default function TradeHistoryScreen({
 }) {
   return (
     <div className="min-h-screen text-white space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Trade History</h1>
         <p className="text-gray-400 text-sm">
           Review your past decisions and outcomes
         </p>
       </div>
-
-      {/* Filters */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <select
@@ -98,7 +96,7 @@ export default function TradeHistoryScreen({
       </div>
 
       {isLoading ? (
-        <div className="text-gray-400 text-center py-10">Loading trades...</div>
+        <Loader />
       ) : (
         <div className="grid md:grid-cols-3 gap-4">
           {trades.length > 0 ? (

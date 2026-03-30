@@ -15,16 +15,34 @@ const tradeSchema = new Schema(
     entryPrice: Number,
     exitPrice: Number,
     quantity: Number,
-    strategy: String,
-    emotion: String,
+    strategy: {
+      type: String,
+      enum: ["Breakout", "Scalping", "Swing", "Momentum", "Mean Reversion"],
+    },
+    emotion: {
+      type: String,
+      enum: ["Confident", "Neutral", "Anxious", "FOMO", "Calm"],
+    },
     notes: String,
-    tradeDate: Date,
     profitLoss: Number,
-    duration: Number,
-    notes: String,
+    isTradeTaken: {
+      type: Boolean,
+      required: true,
+    },
   },
   { timestamps: true },
 );
+
+tradeSchema.pre("save", function (next) {
+  if (this.entryPrice && this.exitPrice && this.quantity) {
+    this.profitLoss =
+      this.tradeType === "BUY"
+        ? (this.exitPrice - this.entryPrice) * this.quantity
+        : (this.entryPrice - this.exitPrice) * this.quantity;
+  }
+
+  next();
+});
 
 const Trade = mongoose.model("Trade", tradeSchema);
 export default Trade;

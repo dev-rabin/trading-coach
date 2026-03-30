@@ -15,6 +15,7 @@ import ProtectedRoute from "./guards/protectedRoute";
 import PublicRoute from "./guards/publicRoute";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Loader from "./components/layout/Loader";
 const queryClient = new QueryClient();
 
 const Layout = () => {
@@ -29,11 +30,7 @@ const Layout = () => {
   }, [dispatch]);
 
   if (authStatus === "loading") {
-    return (
-      <div className="h-screen flex items-center justify-center text-gray-400">
-        Checking session...
-      </div>
-    );
+    return <Loader/>
   }
 
   return (

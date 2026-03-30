@@ -6,6 +6,7 @@ import StrategyChart from "../components/Charts/StrategyChart";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { analyticsAPI } from "../features/analytics/analyticsAPI";
+import Loader from "../components/layout/Loader";
 
 export default function AnalyticsScreen() {
   const [range, setRange] = useState("30D");
@@ -22,11 +23,7 @@ export default function AnalyticsScreen() {
     );
   }
   if (isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center text-gray-400">
-        Loading analytics...
-      </div>
-    );
+    return <Loader/>
   }
   if (isError)
     return <div className="text-red-500 p-6">Error loading data</div>;

@@ -34,6 +34,9 @@ app.use("/api/auth", AuthRoutes);
 import AnalyticsRoutes from "./src/routes/analyticsRoutes.js";
 app.use("/api/analytics", AnalyticsRoutes);
 
+import HomeRoute from "./src/routes/homeRoutes.js"
+app.use("/api/home", HomeRoute)
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

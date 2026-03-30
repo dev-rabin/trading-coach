@@ -142,7 +142,6 @@ export default function LogTradeForm() {
         </div>
       </div>
 
-      {/* Notes */}
       <div>
         <p className="text-sm text-gray-400 mb-2">
           Notes <span className="text-gray-500">(optional)</span>
@@ -155,7 +154,6 @@ export default function LogTradeForm() {
         />
       </div>
 
-      {/* Button */}
       <button
         onClick={handleSubmit}
         disabled={isLoading}

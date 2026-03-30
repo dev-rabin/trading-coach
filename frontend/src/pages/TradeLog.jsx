@@ -65,8 +65,6 @@ export default function TradeLogScreen() {
   }).length;
 
   const winRate = trades.length ? Math.round((wins / trades.length) * 100) : 0;
-
-  // Strategy stats
   const strategyMap = {};
 
   trades.forEach((t) => {

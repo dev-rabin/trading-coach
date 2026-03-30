@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../features/auth/authSlice";
+import { useLocation } from "react-router-dom";
 
 const navItems = [
   { name: "Home", icon: Home, href: "/" },
@@ -23,7 +24,7 @@ export default function Navbar() {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -59,12 +60,13 @@ export default function Navbar() {
               <a
                 key={item.name}
                 href={item.href}
-                className="group flex items-center gap-2 rounded-xl px-4 py-2 text-sm text-gray-300 transition hover:bg-white/5 hover:text-white"
+                className={`group relative flex items-center gap-2 px-4 py-2 text-sm transition
+                            ${
+                              location.pathname === item.href
+                                ? "text-green-400"
+                                : "text-gray-300 hover:text-white"
+                            }`}
               >
-                <Icon
-                  size={16}
-                  className="text-gray-400 group-hover:text-white"
-                />
                 <span>{item.name}</span>
               </a>
             );
@@ -73,9 +75,9 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-3 md:flex">
-          <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-400 animate-pulse">
+          {/* <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-400 animate-pulse">
             Live Coach
-          </div>
+          </div> */}
 
           <div className="relative" onClick={() => setOpen(!open)}>
             <div className="flex items-center gap-3 cursor-pointer bg-[#0f0f0f] px-3 py-2 rounded-xl border border-gray-800 hover:border-green-400 transition">
@@ -96,7 +98,7 @@ export default function Navbar() {
                 </button>
 
                 <button
-                  onClick={() => navigate("/trade-history")}
+                  onClick={() => navigate("/trade-log")}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-green-600 transition cursor-pointer"
                 >
                   Trade History
