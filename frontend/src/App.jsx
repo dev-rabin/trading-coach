@@ -16,6 +16,7 @@ import PublicRoute from "./guards/publicRoute";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Loader from "./components/layout/Loader";
+import ProfileScreen from "./pages/UserProfile";
 const queryClient = new QueryClient();
 
 const Layout = () => {
@@ -65,6 +66,7 @@ const Layout = () => {
         <Route path="/analytics" element={<AnalyticsScreen />} />
         <Route path="/trade-log" element={<TradeLogScreen />} />
         <Route path="/trade-history" element={<TradeHistoryScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
       </Routes>
       {!hideLayout && <Footer />}
     </>

@@ -75,10 +75,6 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden items-center gap-3 md:flex">
-          {/* <div className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-xs font-medium text-green-400 animate-pulse">
-            Live Coach
-          </div> */}
-
           <div className="relative" onClick={() => setOpen(!open)}>
             <div className="flex items-center gap-3 cursor-pointer bg-[#0f0f0f] px-3 py-2 rounded-xl border border-gray-800 hover:border-green-400 transition">
               <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-semibold">
@@ -102,6 +98,13 @@ export default function Navbar() {
                   className="w-full text-left px-4 py-2 text-sm hover:bg-green-600 transition cursor-pointer"
                 >
                   Trade History
+                </button>
+
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-green-600 transition cursor-pointer"
+                >
+                  Profile
                 </button>
 
                 <div className="border-t border-gray-800" />

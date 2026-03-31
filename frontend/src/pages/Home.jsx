@@ -10,6 +10,7 @@ const HomeScreen = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["home"],
     queryFn: homeAPI,
+    keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });

@@ -1,4 +1,4 @@
-import { Brain, Activity } from "lucide-react";
+import { Brain, Activity, TrendingUp, IndianRupee, Scale, BarChart3, ActivityIcon } from "lucide-react";
 import InsightCard from "../components/Analytics/InsightCard";
 import StatCard from "../components/Analytics/StatCard";
 import ProfitChart from "../components/Charts/ProfitChart";
@@ -15,6 +15,8 @@ export default function AnalyticsScreen() {
     queryKey: ["analytics", range],
     queryFn: () => analyticsAPI(range),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   {
@@ -59,7 +61,6 @@ export default function AnalyticsScreen() {
 
   return (
     <div className="py-6 text-white max-w-7xl mx-auto">
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-10">
         <div className="flex items-center gap-3 ">
           <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
@@ -95,10 +96,30 @@ export default function AnalyticsScreen() {
 
       {/* STATS */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <StatCard title="Win Rate" value={`${data.winRate}%`} />
-        <StatCard title="Total Profit" value={`₹${data.totalProfit}`} />
-        <StatCard title="Risk/Reward" value={`1:${data.riskReward}`} />
-        <StatCard title="Total Trades" value={data.totalTrades} />
+        <StatCard
+          title="Win Rate"
+          value={`${data.winRate}%`}
+          icon={TrendingUp}
+        />
+
+        <StatCard
+          title="Total Profit"
+          value={`₹${data.totalProfit}`}
+          icon={IndianRupee}
+        />
+
+        <StatCard
+          title="Risk/Reward"
+          value={`1:${data.riskReward}`}
+          icon={Scale}
+        />
+
+        <StatCard
+          title="Total Trades"
+          value={data.totalTrades}
+          icon={BarChart3}
+        />
+
         <StatCard
           title="Consistency"
           value={`${data.consistencyScore}%`}
@@ -110,6 +131,7 @@ export default function AnalyticsScreen() {
                 : "Unstable"
           }
           positive={data.consistencyScore > 60}
+          icon={ActivityIcon}
         />
       </div>
 

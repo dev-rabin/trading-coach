@@ -1,11 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getMeAPI, loginAPI, logoutAPI, signupAPI } from "./authAPI";
+import {
+  getMeAPI,
+  loginAPI,
+  logoutAPI,
+  signupAPI,
+  updateProfileAPI,
+} from "./authAPI";
 
 const initialState = {
   user: null,
   loginStatus: "idle",
   signupStatus: "idle",
   authStatus: "idle",
+  updateStatus: "idle",
   error: null,
 };
 
@@ -57,6 +64,18 @@ export const logoutUser = createAsyncThunk(
   },
 );
 
+export const updateProfile = createAsyncThunk(
+  "auth/update",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await updateProfileAPI(payload);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Update Profile failed");
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -66,6 +85,7 @@ const authSlice = createSlice({
       state.loginStatus = "idle";
       state.authStatus = "idle";
       state.signupStatus = "idle";
+      state.updateStatus = "idle";
       state.error = null;
     },
   },
@@ -120,6 +140,23 @@ const authSlice = createSlice({
         state.signupStatus = "idle";
         state.authStatus = "idle";
         state.error = null;
+      })
+
+      // UPDATE
+      .addCase(updateProfile.pending, (state) => {
+        state.updateStatus = "loading";
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.updateStatus = "succeeded";
+        state.user = {
+          ...state.user,
+          ...action.payload.data,
+        };
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.updateStatus = "failed";
+        state.error = action.payload;
       });
   },
 });

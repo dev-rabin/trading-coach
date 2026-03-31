@@ -16,6 +16,8 @@ export default function TradeLogScreen() {
     queryKey: ["trades", strategy, range, search, page],
     queryFn: () => fetchTradesAPI({ strategy, range, search, page }),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   const trades = data?.data || [];
@@ -96,7 +98,6 @@ export default function TradeLogScreen() {
       <div className=" grid lg:grid-cols-3 gap-6 ">
         {/* LEFT SIDE */}
         <div className="lg:col-span-2 space-y-6">
-          {/* FORM CARD */}
           <LogTradeForm />
         </div>
 
@@ -134,7 +135,6 @@ export default function TradeLogScreen() {
         </div>
       </div>
 
-      {/* HISTORY LIST */}
       <div className="space-y-4 max-w-7xl mx-auto my-9">
         <TradeHistoryScreen
           trades={trades}

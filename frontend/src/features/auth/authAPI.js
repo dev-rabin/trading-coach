@@ -19,3 +19,8 @@ export const logoutAPI = async () => {
   const res = await api.post("/auth/logout");
   return res.data;
 };
+
+export const updateProfileAPI = async (data) => {
+  const res = await api.patch("/auth/update", data);
+  return res.data;
+};

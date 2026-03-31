@@ -9,7 +9,7 @@ import {
   clearPreTrade,
   preTradePlan,
 } from "../features/preTrade/preTradeSlice.js";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { homeAPI } from "../features/home/homeAPI.js";
 
 const strategies = ["Breakout", "Scalping", "Swing", "Momentum", "Reversal"];
@@ -88,7 +88,6 @@ export default function PreTradeScreen() {
 
   return (
     <div className="text-white py-6 max-w-7xl mx-auto">
-      {/* HEADER */}
       <div className="flex items-center gap-3 mb-5">
         <div className="p-2 bg-white/5 rounded-lg">
           <Shield size={18} />
@@ -105,7 +104,6 @@ export default function PreTradeScreen() {
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-[#111] border border-white/5 rounded-2xl p-7.5 space-y-6">
-            {/* Strategy */}
             <div>
               <p className="text-sm text-gray-400 mb-2">Strategy</p>
               <div className="flex flex-wrap gap-2">
@@ -120,7 +118,6 @@ export default function PreTradeScreen() {
               </div>
             </div>
 
-            {/* Emotion */}
             <div>
               <p className="text-sm text-gray-400 mb-2">Current Emotion</p>
               <div className="flex flex-wrap gap-2">
@@ -135,7 +132,6 @@ export default function PreTradeScreen() {
               </div>
             </div>
 
-            {/* Inputs */}
             <div className="grid md:grid-cols-2 gap-4">
               <Input
                 name="stopLoss"
@@ -180,13 +176,11 @@ export default function PreTradeScreen() {
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          {/* DECISION */}
           <DecisionScreen />
         </div>
 
         {/* RIGHT */}
         <div className="space-y-6">
-          {/* Behavior Alert */}
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-5">
             <p className="text-yellow-400 text-xs mb-1">BEHAVIOR ALERT</p>
 
@@ -203,7 +197,6 @@ export default function PreTradeScreen() {
             </p>
           </div>
 
-          {/* Discipline */}
           <div className="bg-[#111] border border-white/5 rounded-2xl p-5">
             <div className="flex justify-between items-center">
               <p className="text-sm">Discipline Trend</p>
@@ -224,7 +217,6 @@ export default function PreTradeScreen() {
             </p>
           </div>
 
-          {/* Weekly Stats */}
           <div className="bg-[#111] border border-white/5 rounded-2xl p-5">
             <p className="text-sm mb-3">This Week</p>
 
@@ -252,7 +244,6 @@ export default function PreTradeScreen() {
             </div>
           </div>
 
-          {/* Focus */}
           <div className="bg-[#111] border border-white/5 rounded-2xl p-5">
             <p className="text-sm font-medium mb-3">Today's Focus</p>
 
